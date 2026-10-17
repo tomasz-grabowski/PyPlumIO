@@ -981,6 +981,10 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
             offset=-30,
             unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
         ),
+        180: EcomaxNumberDescription(
+            name="burning_off_draft",
+            unit_of_measurement=UnitOfMeasurement.PASCAL,
+        ),
         187: EcomaxNumberDescription(
             name="no_fuel_detection_time",
             unit_of_measurement=UnitOfMeasurement.MINUTES,
@@ -1017,15 +1021,15 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
             unit_of_measurement=PERCENTAGE,
         ),
         222: EcomaxNumberDescription(
-            name="flameout_detection_delta_temp",
+            name="burning_off_detection_delta_temp",
             unit_of_measurement=UnitOfMeasurement.CELSIUS,
         ),
         223: EcomaxNumberDescription(
-            name="flameout_detection_start_temp",
+            name="burning_off_detection_start_temp",
             unit_of_measurement=UnitOfMeasurement.CELSIUS,
         ),
         224: EcomaxNumberDescription(
-            name="flameout_detection_end_temp",
+            name="burning_off_detection_end_temp",
             unit_of_measurement=UnitOfMeasurement.CELSIUS,
         ),
         227: EcomaxNumberDescription(
