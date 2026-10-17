@@ -181,13 +181,6 @@ class SetEcomaxExtendedParameterRequest(Request):
         except (KeyError, ValueError) as e:
             raise FrameDataError from e
 
-    def decode_message(self, message: bytes) -> dict[str, Any]:
-        """Decode a frame message."""
-        try:
-            return {ATTR_INDEX: message[1], ATTR_VALUE: message[2]}
-        except IndexError as e:
-            raise FrameDataError from e
-
 
 @frame_handler(FrameType.REQUEST_SET_MIXER_PARAMETER)
 @expects_response(responses.SetMixerParameterResponse)

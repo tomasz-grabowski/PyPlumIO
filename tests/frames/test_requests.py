@@ -124,16 +124,12 @@ def test_set_ecomax_extended_parameter(message, data) -> None:
     request = requests.SetEcomaxExtendedParameterRequest(data=data)
     assert request.message == message
     assert request.response is responses.SetEcomaxExtendedParameterResponse
-    assert requests.SetEcomaxExtendedParameterRequest(message=message).data == data
 
 
 def test_set_ecomax_extended_parameter_without_data() -> None:
     """Test a set ecoMAX extended parameter request without any data."""
     with pytest.raises(FrameDataError):
         getattr(requests.SetEcomaxExtendedParameterRequest(), "message")
-
-    with pytest.raises(FrameDataError):
-        getattr(requests.SetEcomaxExtendedParameterRequest(message=b"\x01"), "data")
 
 
 @pytest.mark.parametrize(
