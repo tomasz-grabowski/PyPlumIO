@@ -69,7 +69,9 @@ DEFAULT_TOLERANCE: Final = 1e-6
 
 
 @overload
-def is_close(old: Parameter, new: Parameter) -> bool: ...
+def is_close(
+    old: Parameter, new: Parameter, *, tolerance: float = DEFAULT_TOLERANCE
+) -> bool: ...
 
 
 @overload
@@ -90,12 +92,12 @@ def is_close(
         return False
 
     if isinstance(old, Parameter) and isinstance(new, Parameter):
-        old_range = (old.values.min_value, old.values.max_value)
         if (
             tolerance
             and isinstance(old, Number)
             and isinstance(new, Number)
-            and old_range == (new.values.min_value, new.values.max_value)
+            and old.values.min_value == new.values.min_value
+            and old.values.max_value == new.values.max_value
         ):
             return math.isclose(old, new, abs_tol=tolerance)
 

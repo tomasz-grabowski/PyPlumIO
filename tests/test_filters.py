@@ -12,7 +12,14 @@ import pytest
 import pyplumio
 from pyplumio import filters
 import pyplumio.filters
-from pyplumio.parameters import Number, NumberDescription, Parameter, ParameterValues
+from pyplumio.parameters import (
+    Number,
+    NumberDescription,
+    OffsetNumber,
+    OffsetNumberDescription,
+    Parameter,
+    ParameterValues,
+)
 from pyplumio.structures.alerts import Alert
 from tests.conftest import RAISES
 
@@ -124,25 +131,65 @@ async def test_deadband_number() -> None:
     wrapped_callback = filters.deadband(test_callback, tolerance=1)
     description = NumberDescription(name="test_number")
 
-    def number(value: int, max_value: int) -> Number:
-        """Return a number with the given value and max value."""
-        return Number(Mock(), description, ParameterValues(value, 0, max_value))
+    def number(value: int, min_value: int, max_value: int) -> Number:
+        """Return a number with the given value and range."""
+        return Number(Mock(), description, ParameterValues(value, min_value, max_value))
 
-    await wrapped_callback(number(10, 50))
+    await wrapped_callback(number(10, 0, 50))
     test_callback.assert_awaited_once()
     test_callback.reset_mock()
 
     # Check that callback is not awaited on value change within tolerance.
-    await wrapped_callback(number(11, 50))
+    await wrapped_callback(number(11, 0, 50))
     test_callback.assert_not_awaited()
 
     # Check that callback is awaited on value change above tolerance.
-    await wrapped_callback(number(12, 50))
+    await wrapped_callback(number(12, 0, 50))
     test_callback.assert_awaited_once()
     test_callback.reset_mock()
 
-    # Check that callback is awaited on range change.
-    await wrapped_callback(number(12, 60))
+    # Check that callback is awaited on max value change.
+    await wrapped_callback(number(12, 0, 60))
+    test_callback.assert_awaited_once()
+    test_callback.reset_mock()
+
+    # Check that callback is awaited on min value change.
+    await wrapped_callback(number(12, 5, 60))
+    test_callback.assert_awaited_once()
+
+
+async def test_deadband_scaled_number() -> None:
+    """Test the deadband filter with scaled number parameters."""
+    test_callback = AsyncMock()
+    wrapped_callback = filters.deadband(test_callback, tolerance=15)
+    description = OffsetNumberDescription(name="test_number", step=10, offset=3)
+
+    def number(value: int, min_value: int, max_value: int) -> OffsetNumber:
+        """Return a scaled number with the given raw value and range."""
+        return OffsetNumber(
+            Mock(), description, ParameterValues(value, min_value, max_value)
+        )
+
+    await wrapped_callback(number(10, 3, 50))
+    test_callback.assert_awaited_once()
+    test_callback.reset_mock()
+
+    # Check that tolerance applies to the scaled value (70 -> 80).
+    await wrapped_callback(number(11, 3, 50))
+    test_callback.assert_not_awaited()
+
+    # Check that callback is awaited on scaled change above tolerance (70 -> 90).
+    await wrapped_callback(number(12, 3, 50))
+    test_callback.assert_awaited_once()
+    test_callback.reset_mock()
+
+    # Check that callback is awaited on min value change.
+    await wrapped_callback(number(12, 4, 50))
+    test_callback.assert_awaited_once()
+    test_callback.reset_mock()
+
+    # Check that callback is awaited on max value change.
+    await wrapped_callback(number(12, 4, 51))
     test_callback.assert_awaited_once()
 
 

@@ -96,6 +96,8 @@ value is changed.
 This filter await the callback on signifacant changes only.
 Significance is defined by ``tolerance`` argument (i. e. tolerance=0.1
 will only await callback when value is changed by more that 0.1).
+For Number parameters a change of min or max value always awaits the
+callback; tolerance applies to the value only.
 
 .. code-block:: python
 
