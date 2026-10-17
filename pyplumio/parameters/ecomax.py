@@ -100,6 +100,20 @@ class EcomaxSwitch(EcomaxParameter, Switch):
     description: EcomaxSwitchDescription
 
 
+class EcomaxExtendedNumber(EcomaxNumber):
+    """Represents an ecoMAX number from the extended parameter table."""
+
+    __slots__ = ()
+
+    async def create_request(self) -> Request:
+        """Create a request to change the number."""
+        return await Request.create(
+            FrameType.REQUEST_SET_ECOMAX_EXTENDED_PARAMETER,
+            recipient=self.device.address,
+            data={ATTR_INDEX: self._index, ATTR_VALUE: self.values.value},
+        )
+
+
 PARAMETER_TYPES: dict[ProductType, list[EcomaxParameterDescription]] = {
     ProductType.ECOMAX_P: [
         EcomaxNumberDescription(
@@ -786,6 +800,241 @@ PARAMETER_TYPES: dict[ProductType, list[EcomaxParameterDescription]] = {
 }
 
 
+# Extended parameter tables, keyed by product id and model, then by
+# parameter index. Meaning of indexes differs between products, so only
+# verified products and parameters are described.
+# Fan speed is stored as (rpm - 300) / 10.
+EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescription]] = {
+    (41, "ecoMAX 860P4-NM TOUCH"): {
+        0: EcomaxNumberDescription(
+            name="max_boiler_output",
+            unit_of_measurement=UnitOfMeasurement.KILO_WATT,
+        ),
+        1: EcomaxNumberDescription(
+            name="intermediate_boiler_output",
+            unit_of_measurement=UnitOfMeasurement.KILO_WATT,
+        ),
+        2: EcomaxNumberDescription(
+            name="min_boiler_output",
+            unit_of_measurement=UnitOfMeasurement.KILO_WATT,
+        ),
+        3: EcomaxNumberDescription(
+            name="boiler_output_limit",
+            unit_of_measurement=UnitOfMeasurement.KILO_WATT,
+        ),
+        8: EcomaxNumberDescription(
+            name="fuzzy_logic_a",
+        ),
+        9: EcomaxNumberDescription(
+            name="fuzzy_logic_b",
+        ),
+        10: EcomaxNumberDescription(
+            name="fuzzy_logic_c",
+        ),
+        11: EcomaxNumberDescription(
+            name="fan_speed_30",
+            step=10.0,
+            offset=-30,
+            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
+        ),
+        12: EcomaxNumberDescription(
+            name="fan_speed_50",
+            step=10.0,
+            offset=-30,
+            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
+        ),
+        13: EcomaxNumberDescription(
+            name="fan_speed_100",
+            step=10.0,
+            offset=-30,
+            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
+        ),
+        17: EcomaxNumberDescription(
+            name="draft_30",
+            unit_of_measurement=UnitOfMeasurement.PASCAL,
+        ),
+        18: EcomaxNumberDescription(
+            name="draft_50",
+            unit_of_measurement=UnitOfMeasurement.PASCAL,
+        ),
+        19: EcomaxNumberDescription(
+            name="draft_100",
+            unit_of_measurement=UnitOfMeasurement.PASCAL,
+        ),
+        23: EcomaxNumberDescription(
+            name="control_mode",
+        ),
+        24: EcomaxNumberDescription(
+            name="kindling_duration",
+            unit_of_measurement=UnitOfMeasurement.MINUTES,
+        ),
+        26: EcomaxNumberDescription(
+            name="warming_up_duration",
+            step=2.0,
+            unit_of_measurement=UnitOfMeasurement.SECONDS,
+        ),
+        27: EcomaxNumberDescription(
+            name="glowing_duration",
+            unit_of_measurement=UnitOfMeasurement.MINUTES,
+        ),
+        28: EcomaxNumberDescription(
+            name="supervision_duration",
+            unit_of_measurement=UnitOfMeasurement.MINUTES,
+        ),
+        29: EcomaxNumberDescription(
+            name="supervision_boiler_output",
+            step=0.2,
+            unit_of_measurement=UnitOfMeasurement.KILO_WATT,
+        ),
+        32: EcomaxNumberDescription(
+            name="supervision_fan_speed",
+            step=10.0,
+            offset=-30,
+            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
+        ),
+        35: EcomaxNumberDescription(
+            name="max_fan_speed",
+            step=10.0,
+            offset=-30,
+            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
+        ),
+        36: EcomaxNumberDescription(
+            name="min_fan_output",
+            unit_of_measurement=PERCENTAGE,
+        ),
+        53: EcomaxNumberDescription(
+            name="hopper_capacity",
+            step=5.0,
+            unit_of_measurement=UnitOfMeasurement.KILOGRAMS,
+        ),
+        55: EcomaxNumberDescription(
+            name="fan_pi_integral",
+        ),
+        56: EcomaxNumberDescription(
+            name="exhaust_fan_pi_gain",
+        ),
+        61: EcomaxNumberDescription(
+            name="stabilization_draft",
+            unit_of_measurement=UnitOfMeasurement.PASCAL,
+        ),
+        65: EcomaxNumberDescription(
+            name="kindling_draft",
+            unit_of_measurement=UnitOfMeasurement.PASCAL,
+        ),
+        66: EcomaxNumberDescription(
+            name="ignition_test_time",
+            unit_of_measurement=UnitOfMeasurement.SECONDS,
+        ),
+        70: EcomaxNumberDescription(
+            name="min_fan_speed",
+            step=10.0,
+            offset=-30,
+            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
+        ),
+        72: EcomaxNumberDescription(
+            name="kindling_temp_delta",
+            step=0.1,
+            unit_of_measurement=UnitOfMeasurement.CELSIUS,
+        ),
+        73: EcomaxNumberDescription(
+            name="min_burning_off_duration",
+            unit_of_measurement=UnitOfMeasurement.MINUTES,
+        ),
+        76: EcomaxNumberDescription(
+            name="full_power_down_cycles",
+        ),
+        77: EcomaxNumberDescription(
+            name="full_power_up_cycles",
+        ),
+        78: EcomaxNumberDescription(
+            name="fan_power_decrease_delay",
+        ),
+        80: EcomaxNumberDescription(
+            name="kindling_feeding_time",
+            step=0.1,
+            unit_of_measurement=UnitOfMeasurement.SECONDS,
+        ),
+        85: EcomaxNumberDescription(
+            name="min_boiler_target_temp",
+            unit_of_measurement=UnitOfMeasurement.CELSIUS,
+        ),
+        86: EcomaxNumberDescription(
+            name="max_boiler_target_temp",
+            unit_of_measurement=UnitOfMeasurement.CELSIUS,
+        ),
+        96: EcomaxNumberDescription(
+            name="heating_pump_start_temp",
+            unit_of_measurement=UnitOfMeasurement.CELSIUS,
+        ),
+        155: EcomaxNumberDescription(
+            name="boiler_cooling_temp",
+            unit_of_measurement=UnitOfMeasurement.CELSIUS,
+        ),
+        176: EcomaxNumberDescription(
+            name="burner_cleaning_interval",
+            step=15.0,
+            unit_of_measurement=UnitOfMeasurement.MINUTES,
+        ),
+        178: EcomaxNumberDescription(
+            name="burning_off_fan_speed",
+            step=10.0,
+            offset=-30,
+            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
+        ),
+        187: EcomaxNumberDescription(
+            name="no_fuel_detection_time",
+            unit_of_measurement=UnitOfMeasurement.MINUTES,
+        ),
+        195: EcomaxNumberDescription(
+            name="heat_exchanger_cleaning_time",
+            unit_of_measurement=UnitOfMeasurement.SECONDS,
+        ),
+        196: EcomaxNumberDescription(
+            name="moving_grate_work_time",
+            unit_of_measurement=UnitOfMeasurement.SECONDS,
+        ),
+        201: EcomaxNumberDescription(
+            name="no_fuel_exhaust_temp",
+            unit_of_measurement=UnitOfMeasurement.CELSIUS,
+        ),
+        207: EcomaxNumberDescription(
+            name="draft_correction",
+            offset=100,
+            unit_of_measurement=UnitOfMeasurement.PASCAL,
+        ),
+        214: EcomaxNumberDescription(
+            name="max_fan_output",
+            unit_of_measurement=PERCENTAGE,
+        ),
+        220: EcomaxNumberDescription(
+            name="fuel_correction",
+            offset=20,
+            unit_of_measurement=PERCENTAGE,
+        ),
+        221: EcomaxNumberDescription(
+            name="airflow_correction",
+            offset=10,
+            unit_of_measurement=PERCENTAGE,
+        ),
+        222: EcomaxNumberDescription(
+            name="flameout_detection_delta_temp",
+            unit_of_measurement=UnitOfMeasurement.CELSIUS,
+        ),
+        223: EcomaxNumberDescription(
+            name="flameout_detection_start_temp",
+            unit_of_measurement=UnitOfMeasurement.CELSIUS,
+        ),
+        224: EcomaxNumberDescription(
+            name="flameout_detection_end_temp",
+            unit_of_measurement=UnitOfMeasurement.CELSIUS,
+        ),
+        227: EcomaxNumberDescription(
+            name="grate_cleaning_cycles",
+        ),
+    },
+}
+
+
 ECOMAX_CONTROL_PARAMETER = EcomaxSwitchDescription(
     name=ATTR_ECOMAX_CONTROL, optimistic=True
 )
@@ -802,14 +1051,24 @@ async def get_ecomax_parameter_types(
     )
 
 
+def get_ecomax_extended_parameter_types(
+    product_info: ProductInfo,
+) -> dict[int, EcomaxNumberDescription]:
+    """Return ecoMAX extended parameter types for specific product."""
+    return EXTENDED_PARAMETER_TYPES.get((product_info.id, product_info.model), {})
+
+
 __all__ = [
     "ATTR_ECOMAX_CONTROL",
+    "EcomaxExtendedNumber",
     "EcomaxNumber",
     "EcomaxNumberDescription",
     "EcomaxParameter",
     "EcomaxParameterDescription",
     "EcomaxSwitch",
     "EcomaxSwitchDescription",
+    "EXTENDED_PARAMETER_TYPES",
+    "get_ecomax_extended_parameter_types",
     "get_ecomax_parameter_types",
     "PARAMETER_TYPES",
     "THERMOSTAT_PROFILE_PARAMETER",

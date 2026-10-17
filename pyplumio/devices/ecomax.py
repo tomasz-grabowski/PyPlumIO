@@ -31,9 +31,11 @@ from pyplumio.parameters import ParameterValues
 from pyplumio.parameters.ecomax import (
     ECOMAX_CONTROL_PARAMETER,
     THERMOSTAT_PROFILE_PARAMETER,
+    EcomaxExtendedNumber,
     EcomaxNumber,
     EcomaxSwitch,
     EcomaxSwitchDescription,
+    get_ecomax_extended_parameter_types,
     get_ecomax_parameter_types,
 )
 from pyplumio.structures.alerts import ATTR_TOTAL_ALERTS
@@ -289,6 +291,36 @@ class EcoMAX(PhysicalDevice):
 
         await asyncio.gather(*_ecomax_parameter_events())
         return True
+
+    @event_listener
+    async def on_event_ecomax_extended_parameters(
+        self, parameters: list[tuple[int, ParameterValues]]
+    ) -> None:
+        """Update ecoMAX extended parameters and dispatch the events.
+
+        Raw parameter values are kept under the original event name.
+        """
+        _LOGGER.debug("Received device extended parameters")
+        product_info = await self.get(ATTR_PRODUCT)
+        parameter_types = get_ecomax_extended_parameter_types(product_info)
+        if not parameter_types:
+            _LOGGER.debug(
+                "No extended parameter descriptions for %s", product_info.model
+            )
+            return
+
+        await asyncio.gather(
+            *(
+                self.dispatch(
+                    description.name,
+                    EcomaxExtendedNumber.create_or_update(
+                        device=self, description=description, values=values, index=index
+                    ),
+                )
+                for index, values in parameters
+                if (description := parameter_types.get(index))
+            )
+        )
 
     @event_listener
     async def on_event_fuel_consumption(self, fuel_consumption: float) -> None:
