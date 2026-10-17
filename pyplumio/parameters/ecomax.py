@@ -861,6 +861,8 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
             name="draft_100",
             unit_of_measurement=UnitOfMeasurement.PASCAL,
         ),
+        # 0 - standard, 1 - fuzzy logic. Kept as a number, because the
+        # controller allows a third value (2) with unknown meaning.
         23: EcomaxNumberDescription(
             name="control_mode",
         ),
