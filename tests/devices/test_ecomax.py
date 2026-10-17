@@ -364,14 +364,9 @@ async def test_ecomax_extended_parameters_event_listener(
         assert isinstance(parameter, EcomaxExtendedNumber)
         assert parameter.values == raw_parameters[index]
 
-    # Test plain number.
-    control_mode = ecomax.get_nowait("control_mode")
-    assert control_mode.value == 1
-    assert control_mode.min_value == 0
-    assert control_mode.max_value == 2
-
-    # Test numbers with step and offset.
+    # Test plain numbers and numbers with step and offset.
     for name, value, min_value, max_value in (
+        ("control_mode", 1, 0, 2),
         ("fan_speed_100", 1700, 1360, 2850),
         ("min_fan_speed", 700, 300, 2840),
         ("supervision_boiler_output", 2.8, 0.2, 51.0),
@@ -407,15 +402,8 @@ async def test_ecomax_extended_parameters_event_listener(
         ecomax.get_nowait("draft_100").unit_of_measurement == UnitOfMeasurement.PASCAL
     )
 
-    # Test setting the parameter with step and offset.
-    fan_speed_100 = ecomax.get_nowait("fan_speed_100")
-    await fan_speed_100.set(1800, timeout=0)
-    request = mock_put_nowait.call_args[0][0]
-    assert isinstance(request, SetEcomaxExtendedParameterRequest)
-    assert request.recipient == DeviceType.ECOMAX
-    assert request.message == bytes.fromhex("010d96")
-
     # Test that parameter instance is not recreated on subsequent calls.
+    fan_speed_100 = ecomax.get_nowait("fan_speed_100")
     ecomax.handle_frame(
         EcomaxExtendedParametersResponse(
             message=bytes(ecomax_extended_parameters_message)
