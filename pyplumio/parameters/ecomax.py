@@ -919,9 +919,21 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
         56: EcomaxNumberDescription(
             name="exhaust_fan_pi_gain",
         ),
+        59: EcomaxNumberDescription(
+            name="stabilization_fan_speed",
+            step=10.0,
+            offset=-30,
+            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
+        ),
         61: EcomaxNumberDescription(
             name="stabilization_draft",
             unit_of_measurement=UnitOfMeasurement.PASCAL,
+        ),
+        63: EcomaxNumberDescription(
+            name="kindling_fan_speed",
+            step=10.0,
+            offset=-30,
+            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
         ),
         65: EcomaxNumberDescription(
             name="kindling_draft",
@@ -976,6 +988,10 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
             name="heating_pump_start_temp",
             unit_of_measurement=UnitOfMeasurement.CELSIUS,
         ),
+        117: EcomaxNumberDescription(
+            name="thermostat_decrease_boiler_temp",
+            unit_of_measurement=UnitOfMeasurement.CELSIUS,
+        ),
         155: EcomaxNumberDescription(
             name="boiler_cooling_temp",
             unit_of_measurement=UnitOfMeasurement.CELSIUS,
@@ -1001,6 +1017,10 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
         ),
         195: EcomaxNumberDescription(
             name="heat_exchanger_cleaning_time",
+            unit_of_measurement=UnitOfMeasurement.SECONDS,
+        ),
+        196: EcomaxNumberDescription(
+            name="moving_grate_work_time",
             unit_of_measurement=UnitOfMeasurement.SECONDS,
         ),
         201: EcomaxNumberDescription(
