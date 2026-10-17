@@ -892,6 +892,10 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
             offset=-30,
             unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
         ),
+        34: EcomaxNumberDescription(
+            name="supervision_draft",
+            unit_of_measurement=UnitOfMeasurement.PASCAL,
+        ),
         35: EcomaxNumberDescription(
             name="max_fan_speed",
             step=10.0,

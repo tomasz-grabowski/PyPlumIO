@@ -380,6 +380,7 @@ async def test_ecomax_extended_parameters_event_listener(
         ("kindling_draft", 40, 6, 255),
         ("stabilization_draft", 30, 6, 255),
         ("burning_off_draft", 30, 6, 255),
+        ("supervision_draft", 10, 6, 255),
         ("burning_off_detection_start_temp", 100, 70, 130),
         ("burning_off_detection_end_temp", 55, 30, 95),
         ("burning_off_detection_delta_temp", 4, 1, 30),
