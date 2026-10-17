@@ -1001,10 +1001,6 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
             name="heat_exchanger_cleaning_time",
             unit_of_measurement=UnitOfMeasurement.SECONDS,
         ),
-        196: EcomaxNumberDescription(
-            name="moving_grate_work_time",
-            unit_of_measurement=UnitOfMeasurement.SECONDS,
-        ),
         201: EcomaxNumberDescription(
             name="no_fuel_exhaust_temp",
             unit_of_measurement=UnitOfMeasurement.CELSIUS,

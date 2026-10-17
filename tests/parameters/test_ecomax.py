@@ -119,5 +119,5 @@ async def test_get_ecomax_extended_parameter_types(ecomax: EcoMAX) -> None:
     )
     parameter_types = get_ecomax_extended_parameter_types(product_info)
     assert parameter_types is EXTENDED_PARAMETER_TYPES[(41, "ecoMAX 860P4-NM TOUCH")]
-    assert len(parameter_types) == 58
+    assert len(parameter_types) == 57
     assert parameter_types[23].name == "control_mode"
