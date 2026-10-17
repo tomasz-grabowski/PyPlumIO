@@ -236,6 +236,11 @@ Set the editable parameter value in the extended parameter table.
 The message starts with a byte of unknown meaning, that was always 0x01 in
 captured frames, followed by the parameter index and the new value.
 
+In captures, after every panel write the controller increased the frame
+type 97 version in the regulator data frame version table within 1-3 seconds
+(6, 7, 8, 9, 10, 11 for five writes), so PyPlumIO re-reads the extended
+parameter table and confirms the set from it.
+
 Request
 ^^^^^^^
 
