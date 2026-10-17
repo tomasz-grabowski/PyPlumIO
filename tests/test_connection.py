@@ -185,7 +185,7 @@ class TestTcpConnection:
         """Test TCP connection."""
         await tcp_connection.connect()
         serialx_open_serial_connection.assert_awaited_once_with(
-            f"socket://{HOST}:{PORT}", timeout=10
+            f"socket://{HOST}:{PORT}", baudrate=115200, timeout=10
         )
 
     async def test_repr(self, tcp_connection: TcpConnection) -> None:

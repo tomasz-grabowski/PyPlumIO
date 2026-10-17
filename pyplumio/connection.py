@@ -174,8 +174,9 @@ class TcpConnection(Connection):
         self,
     ) -> tuple[asyncio.StreamReader, asyncio.StreamWriter]:
         """Open the connection and return reader and writer objects."""
+        # serialx < 1.14 requires a baudrate even for socket connections.
         return await serialx.open_serial_connection(
-            f"socket://{self.host}:{self.port}", **self.options
+            f"socket://{self.host}:{self.port}", **({"baudrate": 115200} | self.options)
         )
 
 
