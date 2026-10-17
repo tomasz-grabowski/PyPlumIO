@@ -303,12 +303,6 @@ class EcoMAX(PhysicalDevice):
         _LOGGER.debug("Received device extended parameters")
         product_info = await self.get(ATTR_PRODUCT)
         parameter_types = get_ecomax_extended_parameter_types(product_info)
-        if not parameter_types:
-            _LOGGER.debug(
-                "No extended parameter descriptions for %s", product_info.model
-            )
-            return
-
         await asyncio.gather(
             *(
                 self.dispatch(
