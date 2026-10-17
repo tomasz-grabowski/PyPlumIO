@@ -354,7 +354,7 @@ async def test_ecomax_extended_parameters_event_listener(
     await ecomax.wait_until_done()
 
     # Test that raw parameters are kept.
-    raw_parameters = ecomax.get_nowait(ATTR_ECOMAX_EXTENDED_PARAMETERS)
+    raw_parameters = dict(ecomax.get_nowait(ATTR_ECOMAX_EXTENDED_PARAMETERS))
     assert len(raw_parameters) == 231
 
     # Test that only described parameters are dispatched.
@@ -362,7 +362,7 @@ async def test_ecomax_extended_parameters_event_listener(
     for index, description in descriptions.items():
         parameter = ecomax.get_nowait(description.name)
         assert isinstance(parameter, EcomaxExtendedNumber)
-        assert parameter.values == raw_parameters[index][1]
+        assert parameter.values == raw_parameters[index]
 
     # Test plain number.
     control_mode = ecomax.get_nowait("control_mode")
