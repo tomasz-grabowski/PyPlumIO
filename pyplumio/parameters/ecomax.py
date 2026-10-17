@@ -935,6 +935,10 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
             offset=-30,
             unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
         ),
+        71: EcomaxNumberDescription(
+            name="min_draft",
+            unit_of_measurement=UnitOfMeasurement.PASCAL,
+        ),
         72: EcomaxNumberDescription(
             name="kindling_temp_delta",
             step=0.1,
@@ -1008,6 +1012,14 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
         207: EcomaxNumberDescription(
             name="draft_correction",
             offset=100,
+            unit_of_measurement=UnitOfMeasurement.PASCAL,
+        ),
+        208: EcomaxNumberDescription(
+            name="draft_alarm_min",
+            unit_of_measurement=UnitOfMeasurement.PASCAL,
+        ),
+        209: EcomaxNumberDescription(
+            name="draft_alarm_max",
             unit_of_measurement=UnitOfMeasurement.PASCAL,
         ),
         214: EcomaxNumberDescription(
