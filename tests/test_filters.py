@@ -12,7 +12,7 @@ import pytest
 import pyplumio
 from pyplumio import filters
 import pyplumio.filters
-from pyplumio.parameters import Parameter, ParameterValues
+from pyplumio.parameters import Number, NumberDescription, Parameter, ParameterValues
 from pyplumio.structures.alerts import Alert
 from tests.conftest import RAISES
 
@@ -183,6 +183,33 @@ async def test_on_change_parameter() -> None:
     test_parameter.values = ParameterValues(1, 1, 2)
     await wrapped_callback(test_parameter)
     test_callback.assert_awaited_once_with(test_parameter)
+
+
+async def test_on_change_number() -> None:
+    """Test the value changed filter with number range change."""
+    test_callback = AsyncMock()
+    wrapped_callback = filters.on_change(test_callback)
+    description = NumberDescription(name="test_number")
+
+    def number(min_value: int, max_value: int) -> Number:
+        return Number(Mock(), description, ParameterValues(1, min_value, max_value))
+
+    await wrapped_callback(number(0, 5))
+    test_callback.assert_awaited_once()
+    test_callback.reset_mock()
+
+    # Check that callback is not awaited with no change.
+    await wrapped_callback(number(0, 5))
+    test_callback.assert_not_awaited()
+
+    # Check that callback is awaited on min value change.
+    await wrapped_callback(number(1, 5))
+    test_callback.assert_awaited_once()
+    test_callback.reset_mock()
+
+    # Check that callback is awaited on max value change.
+    await wrapped_callback(number(1, 6))
+    test_callback.assert_awaited_once()
 
 
 async def test_debounce() -> None:

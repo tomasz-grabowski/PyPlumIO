@@ -89,11 +89,11 @@ def is_close(
     if isinstance(new, Parameter) and new.update_pending.is_set():
         return False
 
-    if tolerance and isinstance(old, SupportsFloat) and isinstance(new, SupportsFloat):
-        return math.isclose(old, new, abs_tol=tolerance)
-
     if isinstance(old, Parameter) and isinstance(new, Parameter):
         return old.values.__eq__(new.values)
+
+    if tolerance and isinstance(old, SupportsFloat) and isinstance(new, SupportsFloat):
+        return math.isclose(old, new, abs_tol=tolerance)
 
     return old.__eq__(new)
 
