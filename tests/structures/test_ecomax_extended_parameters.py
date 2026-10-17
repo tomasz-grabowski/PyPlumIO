@@ -25,15 +25,16 @@ class TestEcomaxExtendedParametersStructure:
         self, ecomax_extended_parameters_structure: EcomaxExtendedParametersStructure
     ) -> None:
         """Test decoding of ecoMAX extended parameters structure."""
-        message = bytes.fromhex("020a020103ffffff")
+        message = bytes.fromhex("030a020103ffffffff00ff")
         data: dict[str, Any] = {}
         ecomax_extended_parameters_structure.decode(message, data)
         assert data == {
             ATTR_ECOMAX_EXTENDED_PARAMETERS: [
-                (10, ParameterValues(value=2, min_value=1, max_value=3))
+                (10, ParameterValues(value=2, min_value=1, max_value=3)),
+                (12, ParameterValues(value=255, min_value=0, max_value=255)),
             ]
         }
-        assert ecomax_extended_parameters_structure.offset == 8
+        assert ecomax_extended_parameters_structure.offset == 11
 
     def test_decode_truncated(
         self, ecomax_extended_parameters_structure: EcomaxExtendedParametersStructure
