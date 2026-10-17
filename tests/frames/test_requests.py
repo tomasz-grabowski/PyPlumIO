@@ -100,6 +100,38 @@ def test_set_ecomax_parameter_without_data() -> None:
 
 @pytest.mark.parametrize(
     ("message", "data"),
+    load_json_parameters("requests/ecomax_extended_parameters.json"),
+)
+def test_ecomax_extended_parameters(message, data) -> None:
+    """Test an ecoMAX extended parameters request."""
+    request = requests.EcomaxExtendedParametersRequest(data=data)
+    assert request.message == message
+    assert request.response is responses.EcomaxExtendedParametersResponse
+
+
+@pytest.mark.parametrize(
+    ("message", "data"),
+    load_json_parameters("requests/set_ecomax_extended_parameter.json"),
+)
+def test_set_ecomax_extended_parameter(message, data) -> None:
+    """Test a set ecoMAX extended parameter request."""
+    request = requests.SetEcomaxExtendedParameterRequest(data=data)
+    assert request.message == message
+    assert request.response is responses.SetEcomaxExtendedParameterResponse
+    assert requests.SetEcomaxExtendedParameterRequest(message=message).data == data
+
+
+def test_set_ecomax_extended_parameter_without_data() -> None:
+    """Test a set ecoMAX extended parameter request without any data."""
+    with pytest.raises(FrameDataError):
+        getattr(requests.SetEcomaxExtendedParameterRequest(), "message")
+
+    with pytest.raises(FrameDataError):
+        getattr(requests.SetEcomaxExtendedParameterRequest(message=b"\x01"), "data")
+
+
+@pytest.mark.parametrize(
+    ("message", "data"),
     load_json_parameters("requests/mixer_parameters.json"),
 )
 def test_mixer_parameters_request(message, data) -> None:

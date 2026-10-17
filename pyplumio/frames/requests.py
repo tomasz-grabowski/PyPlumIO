@@ -82,6 +82,21 @@ class EcomaxParametersRequest(Request):
         return bytes([data.get(ATTR_COUNT, 255), data.get(ATTR_START, 0)])
 
 
+@frame_handler(FrameType.REQUEST_ECOMAX_EXTENDED_PARAMETERS)
+@expects_response(responses.EcomaxExtendedParametersResponse)
+class EcomaxExtendedParametersRequest(Request):
+    """Represents an ecoMAX extended parameters request.
+
+    Contains number of parameters and index of the first parameter.
+    """
+
+    __slots__ = ()
+
+    def create_message(self, data: dict[str, Any]) -> bytes:
+        """Create a frame message."""
+        return bytes([data.get(ATTR_COUNT, 255), data.get(ATTR_START, 0)])
+
+
 @frame_handler(FrameType.REQUEST_MIXER_PARAMETERS)
 @expects_response(responses.MixerParametersResponse)
 class MixerParametersRequest(Request):
@@ -145,6 +160,32 @@ class SetEcomaxParameterRequest(Request):
         try:
             return bytes([data[ATTR_INDEX], data[ATTR_VALUE]])
         except (KeyError, ValueError) as e:
+            raise FrameDataError from e
+
+
+@frame_handler(FrameType.REQUEST_SET_ECOMAX_EXTENDED_PARAMETER)
+@expects_response(responses.SetEcomaxExtendedParameterResponse)
+class SetEcomaxExtendedParameterRequest(Request):
+    """Represents a request to set an ecoMAX extended parameter.
+
+    Contains number of parameters, parameter index and new value.
+    Only a single parameter per request is supported.
+    """
+
+    __slots__ = ()
+
+    def create_message(self, data: dict[str, Any]) -> bytes:
+        """Create a frame message."""
+        try:
+            return bytes([1, data[ATTR_INDEX], data[ATTR_VALUE]])
+        except (KeyError, ValueError) as e:
+            raise FrameDataError from e
+
+    def decode_message(self, message: bytes) -> dict[str, Any]:
+        """Decode a frame message."""
+        try:
+            return {ATTR_INDEX: message[1], ATTR_VALUE: message[2]}
+        except IndexError as e:
             raise FrameDataError from e
 
 
@@ -269,12 +310,14 @@ __all__ = [
     "AlertsRequest",
     "CheckDeviceRequest",
     "EcomaxControlRequest",
+    "EcomaxExtendedParametersRequest",
     "EcomaxParametersRequest",
     "MixerParametersRequest",
     "PasswordRequest",
     "ProgramVersionRequest",
     "RegulatorDataSchemaRequest",
     "SchedulesRequest",
+    "SetEcomaxExtendedParameterRequest",
     "SetEcomaxParameterRequest",
     "SetMixerParameterRequest",
     "SetScheduleRequest",
