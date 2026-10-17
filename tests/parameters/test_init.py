@@ -58,6 +58,7 @@ def fixture_switch(ecomax: EcoMAX) -> Switch:
     ("data", "expected_result"),
     [
         (bytes([BYTE_UNDEFINED, 0xFE, BYTE_UNDEFINED, BYTE_UNDEFINED]), True),
+        (bytes([BYTE_UNDEFINED, 0x00, BYTE_UNDEFINED]), True),
         (bytes([BYTE_UNDEFINED] * 4), False),
     ],
 )
