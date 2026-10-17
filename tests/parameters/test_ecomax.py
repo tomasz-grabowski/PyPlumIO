@@ -1,6 +1,13 @@
 """Contains tests for the ecoMAX parameter descriptors."""
 
-from pyplumio.const import ATTR_INDEX, ATTR_OFFSET, ATTR_SIZE, ATTR_VALUE, ProductType
+from pyplumio.const import (
+    ATTR_INDEX,
+    ATTR_OFFSET,
+    ATTR_SIZE,
+    ATTR_VALUE,
+    ProductType,
+    UnitOfMeasurement,
+)
 from pyplumio.devices.ecomax import EcoMAX
 from pyplumio.frames.requests import (
     EcomaxControlRequest,
@@ -17,7 +24,6 @@ from pyplumio.parameters.ecomax import (
     EcomaxNumberDescription,
     EcomaxSwitch,
     EcomaxSwitchDescription,
-    get_ecomax_extended_parameter_types,
     get_ecomax_parameter_types,
 )
 from pyplumio.structures.ecomax_parameters import ATTR_ECOMAX_CONTROL
@@ -106,18 +112,14 @@ async def test_ecomax_extended_number_create_request(ecomax: EcoMAX) -> None:
     assert request.message == bytes.fromhex("011701")
 
 
-async def test_get_ecomax_extended_parameter_types(ecomax: EcoMAX) -> None:
-    """Test ecoMAX extended parameter types getter."""
-    assert get_ecomax_extended_parameter_types(ecomax.product) == {}
-    product_info = ProductInfo(
-        type=ProductType.ECOMAX_P,
-        id=41,
-        uid="**REDACTED**",
-        logo=0,
-        image=0,
-        model="ecoMAX 860P4-NM TOUCH",
-    )
-    parameter_types = get_ecomax_extended_parameter_types(product_info)
-    assert parameter_types is EXTENDED_PARAMETER_TYPES[(41, "ecoMAX 860P4-NM TOUCH")]
+def test_extended_parameter_types() -> None:
+    """Test ecoMAX extended parameter types."""
+    parameter_types = EXTENDED_PARAMETER_TYPES[(41, "ecoMAX 860P4-NM TOUCH")]
     assert len(parameter_types) == 61
     assert parameter_types[23].name == "control_mode"
+    assert parameter_types[11] == EcomaxNumberDescription(
+        name="fan_speed_30",
+        step=10.0,
+        offset=-30,
+        unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
+    )

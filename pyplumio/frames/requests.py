@@ -84,17 +84,13 @@ class EcomaxParametersRequest(Request):
 
 @frame_handler(FrameType.REQUEST_ECOMAX_EXTENDED_PARAMETERS)
 @expects_response(responses.EcomaxExtendedParametersResponse)
-class EcomaxExtendedParametersRequest(Request):
+class EcomaxExtendedParametersRequest(EcomaxParametersRequest):
     """Represents an ecoMAX extended parameters request.
 
     Contains number of parameters and index of the first parameter.
     """
 
     __slots__ = ()
-
-    def create_message(self, data: dict[str, Any]) -> bytes:
-        """Create a frame message."""
-        return bytes([data.get(ATTR_COUNT, 255), data.get(ATTR_START, 0)])
 
 
 @frame_handler(FrameType.REQUEST_MIXER_PARAMETERS)
