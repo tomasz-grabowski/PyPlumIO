@@ -90,6 +90,15 @@ def is_close(
         return False
 
     if isinstance(old, Parameter) and isinstance(new, Parameter):
+        old_range = (old.values.min_value, old.values.max_value)
+        if (
+            tolerance
+            and isinstance(old, Number)
+            and isinstance(new, Number)
+            and old_range == (new.values.min_value, new.values.max_value)
+        ):
+            return math.isclose(old, new, abs_tol=tolerance)
+
         return old.values.__eq__(new.values)
 
     if tolerance and isinstance(old, SupportsFloat) and isinstance(new, SupportsFloat):

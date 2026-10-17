@@ -118,6 +118,34 @@ async def test_deadband() -> None:
         await wrapped_callback("banana")
 
 
+async def test_deadband_number() -> None:
+    """Test the deadband filter with number parameters."""
+    test_callback = AsyncMock()
+    wrapped_callback = filters.deadband(test_callback, tolerance=1)
+    description = NumberDescription(name="test_number")
+
+    def number(value: int, max_value: int) -> Number:
+        """Return a number with the given value and max value."""
+        return Number(Mock(), description, ParameterValues(value, 0, max_value))
+
+    await wrapped_callback(number(10, 50))
+    test_callback.assert_awaited_once()
+    test_callback.reset_mock()
+
+    # Check that callback is not awaited on value change within tolerance.
+    await wrapped_callback(number(11, 50))
+    test_callback.assert_not_awaited()
+
+    # Check that callback is awaited on value change above tolerance.
+    await wrapped_callback(number(12, 50))
+    test_callback.assert_awaited_once()
+    test_callback.reset_mock()
+
+    # Check that callback is awaited on range change.
+    await wrapped_callback(number(12, 60))
+    test_callback.assert_awaited_once()
+
+
 async def test_on_change() -> None:
     """Test the value changed filter."""
     test_callback = AsyncMock()
@@ -192,6 +220,7 @@ async def test_on_change_number() -> None:
     description = NumberDescription(name="test_number")
 
     def number(min_value: int, max_value: int) -> Number:
+        """Return a number with the given range."""
         return Number(Mock(), description, ParameterValues(1, min_value, max_value))
 
     await wrapped_callback(number(0, 5))
