@@ -109,6 +109,12 @@ def test_ecomax_extended_parameters(message, data) -> None:
     assert request.response is responses.EcomaxExtendedParametersResponse
 
 
+def test_ecomax_extended_parameters_raw_bytes() -> None:
+    """Test that ecoMAX extended parameters request matches the capture."""
+    request = requests.EcomaxExtendedParametersRequest(recipient=DeviceType.ECOMAX)
+    assert request.raw_bytes == bytes.fromhex("680c004556300561ff00dc16")
+
+
 @pytest.mark.parametrize(
     ("message", "data"),
     load_json_parameters("requests/set_ecomax_extended_parameter.json"),
