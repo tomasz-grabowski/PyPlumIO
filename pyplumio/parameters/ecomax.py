@@ -804,6 +804,12 @@ PARAMETER_TYPES: dict[ProductType, list[EcomaxParameterDescription]] = {
 # parameter index. Meaning of indexes differs between products, so only
 # verified products and parameters are described.
 # Fan speed is stored as (rpm - 300) / 10.
+_fan_speed = partial(
+    EcomaxNumberDescription,
+    step=10.0,
+    offset=-30,
+    unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
+)
 EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescription]] = {
     (41, "ecoMAX 860P4-NM TOUCH"): {
         0: EcomaxNumberDescription(
@@ -831,24 +837,9 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
         10: EcomaxNumberDescription(
             name="fuzzy_logic_c",
         ),
-        11: EcomaxNumberDescription(
-            name="fan_speed_30",
-            step=10.0,
-            offset=-30,
-            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
-        ),
-        12: EcomaxNumberDescription(
-            name="fan_speed_50",
-            step=10.0,
-            offset=-30,
-            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
-        ),
-        13: EcomaxNumberDescription(
-            name="fan_speed_100",
-            step=10.0,
-            offset=-30,
-            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
-        ),
+        11: _fan_speed("fan_speed_30"),
+        12: _fan_speed("fan_speed_50"),
+        13: _fan_speed("fan_speed_100"),
         17: EcomaxNumberDescription(
             name="draft_30",
             unit_of_measurement=UnitOfMeasurement.PASCAL,
@@ -888,22 +879,12 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
             step=0.2,
             unit_of_measurement=UnitOfMeasurement.KILO_WATT,
         ),
-        32: EcomaxNumberDescription(
-            name="supervision_fan_speed",
-            step=10.0,
-            offset=-30,
-            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
-        ),
+        32: _fan_speed("supervision_fan_speed"),
         34: EcomaxNumberDescription(
             name="supervision_draft",
             unit_of_measurement=UnitOfMeasurement.PASCAL,
         ),
-        35: EcomaxNumberDescription(
-            name="max_fan_speed",
-            step=10.0,
-            offset=-30,
-            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
-        ),
+        35: _fan_speed("max_fan_speed"),
         36: EcomaxNumberDescription(
             name="min_fan_output",
             unit_of_measurement=PERCENTAGE,
@@ -919,22 +900,12 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
         56: EcomaxNumberDescription(
             name="exhaust_fan_pi_gain",
         ),
-        59: EcomaxNumberDescription(
-            name="stabilization_fan_speed",
-            step=10.0,
-            offset=-30,
-            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
-        ),
+        59: _fan_speed("stabilization_fan_speed"),
         61: EcomaxNumberDescription(
             name="stabilization_draft",
             unit_of_measurement=UnitOfMeasurement.PASCAL,
         ),
-        63: EcomaxNumberDescription(
-            name="kindling_fan_speed",
-            step=10.0,
-            offset=-30,
-            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
-        ),
+        63: _fan_speed("kindling_fan_speed"),
         65: EcomaxNumberDescription(
             name="kindling_draft",
             unit_of_measurement=UnitOfMeasurement.PASCAL,
@@ -943,12 +914,7 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
             name="ignition_test_time",
             unit_of_measurement=UnitOfMeasurement.SECONDS,
         ),
-        70: EcomaxNumberDescription(
-            name="min_fan_speed",
-            step=10.0,
-            offset=-30,
-            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
-        ),
+        70: _fan_speed("min_fan_speed"),
         71: EcomaxNumberDescription(
             name="min_draft",
             unit_of_measurement=UnitOfMeasurement.PASCAL,
@@ -1001,12 +967,7 @@ EXTENDED_PARAMETER_TYPES: dict[tuple[int, str], dict[int, EcomaxNumberDescriptio
             step=15.0,
             unit_of_measurement=UnitOfMeasurement.MINUTES,
         ),
-        178: EcomaxNumberDescription(
-            name="burning_off_fan_speed",
-            step=10.0,
-            offset=-30,
-            unit_of_measurement=UnitOfMeasurement.REVOLUTIONS_PER_MINUTE,
-        ),
+        178: _fan_speed("burning_off_fan_speed"),
         180: EcomaxNumberDescription(
             name="burning_off_draft",
             unit_of_measurement=UnitOfMeasurement.PASCAL,
@@ -1089,13 +1050,6 @@ async def get_ecomax_parameter_types(
     )
 
 
-def get_ecomax_extended_parameter_types(
-    product_info: ProductInfo,
-) -> dict[int, EcomaxNumberDescription]:
-    """Return ecoMAX extended parameter types for specific product."""
-    return EXTENDED_PARAMETER_TYPES.get((product_info.id, product_info.model), {})
-
-
 __all__ = [
     "ATTR_ECOMAX_CONTROL",
     "EcomaxExtendedNumber",
@@ -1106,7 +1060,6 @@ __all__ = [
     "EcomaxSwitch",
     "EcomaxSwitchDescription",
     "EXTENDED_PARAMETER_TYPES",
-    "get_ecomax_extended_parameter_types",
     "get_ecomax_parameter_types",
     "PARAMETER_TYPES",
     "THERMOSTAT_PROFILE_PARAMETER",

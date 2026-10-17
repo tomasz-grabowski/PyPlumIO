@@ -8,10 +8,9 @@ from typing import Any, Final
 from pyplumio.const import BYTE_UNDEFINED
 from pyplumio.parameters import ParameterValues
 from pyplumio.structures import StructureDecoder
+from pyplumio.structures.ecomax_parameters import ECOMAX_PARAMETER_SIZE
 
 ATTR_ECOMAX_EXTENDED_PARAMETERS: Final = "ecomax_extended_parameters"
-
-ECOMAX_EXTENDED_PARAMETER_SIZE: Final = 3
 
 
 class EcomaxExtendedParametersStructure(StructureDecoder):
@@ -31,22 +30,18 @@ class EcomaxExtendedParametersStructure(StructureDecoder):
     ) -> Generator[tuple[int, ParameterValues]]:
         """Unpack an ecoMAX extended parameter."""
         for index in range(start, start + count):
-            values = message[
-                self._offset : self._offset + ECOMAX_EXTENDED_PARAMETER_SIZE
-            ]
+            values = message[self._offset : self._offset + ECOMAX_PARAMETER_SIZE]
             if any(x != BYTE_UNDEFINED for x in values):
                 yield (index, ParameterValues(*values))
 
-            self._offset += ECOMAX_EXTENDED_PARAMETER_SIZE
+            self._offset += ECOMAX_PARAMETER_SIZE
 
     def decode(self, message: bytes, data: dict[str, Any], offset: int = 0) -> None:
-        """Decode bytes and return message data and offset."""
+        """Decode bytes and add parameters to message data."""
         count = message[offset]
         start = message[offset + 1]
         self._offset = offset + 2
-        count = min(
-            count, (len(message) - self._offset) // ECOMAX_EXTENDED_PARAMETER_SIZE
-        )
+        count = min(count, (len(message) - self._offset) // ECOMAX_PARAMETER_SIZE)
         data[ATTR_ECOMAX_EXTENDED_PARAMETERS] = list(
             self._ecomax_extended_parameter(message, start, count)
         )
