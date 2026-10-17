@@ -233,8 +233,11 @@ SetEcomaxExtendedParameter
 
 Set the editable parameter value in the extended parameter table.
 
-The message starts with a byte of unknown meaning, that was always 0x01 in
-captured frames, followed by the parameter index and the new value.
+The message is the number of values, the index of the first parameter and
+the new raw values for consecutive indexes. In a panel capture, a single
+write was ``01 <index> <value>`` and one frame ``05 3b 47 16 1e 0a 46`` set
+indexes 0x3b to 0x3f to 71, 22, 30, 10 and 70. PyPlumIO always sets one
+parameter per frame.
 
 In captures, after every panel write the controller increased the frame
 type 97 version in the regulator data frame version table within 1-3 seconds

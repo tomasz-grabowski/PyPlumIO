@@ -168,8 +168,8 @@ class SetEcomaxParameterRequest(Request):
 class SetEcomaxExtendedParameterRequest(Request):
     """Represents a request to set an ecoMAX extended parameter.
 
-    Contains a byte of unknown meaning, parameter index and new value.
-    The first byte was always 0x01 in captured frames.
+    Contains the number of values, the first parameter index and the
+    new values for consecutive indexes. Only one value is sent.
     """
 
     __slots__ = ()
